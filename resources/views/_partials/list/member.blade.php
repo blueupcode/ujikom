@@ -10,7 +10,7 @@
                 <p class="rich-list-subtitle">{{ $member->alamat }}</p>
             </div>
             <div class="rich-list-append">
-                <a href="{{ route('handleCreateTransaction', ['member' => $member->id]) }}" class="btn btn-label-info btn-wide">Pesan</a>
+                <a href="{{ route('handleCreateTransaction', ['member' => $member->id]) }}" class="btn btn-label-info btn-wide">Buat pesanan</a>
             </div>
         </div>
     @empty

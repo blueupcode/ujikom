@@ -21,7 +21,7 @@
             </div>
             <div class="header-wrap">
                 <a href="{{ route('handleLogout') }}" class="btn btn-label-danger btn-icon">
-                    <i class="fa fa-sign-out"></i>
+                    <i class="fa fa-door-open"></i>
                 </a>
             </div>
         </div>
