@@ -99,7 +99,7 @@
                                 </tr>
                                 <tr>
                                     <td>Dibuat pada</td>
-                                    <td>{{ $transaction->tgl }}</td>
+                                    <td>{{ $transaction->created_at }}</td>
                                 </tr>
                                 <tr>
                                     <td>Batas waktu</td>
