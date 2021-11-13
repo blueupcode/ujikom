@@ -20,7 +20,7 @@
                     <div class="portlet-icon">
                         <i class="fa fa-list"></i>
                     </div>
-                    <h2 class="portlet-title">Daftar transaksi diambil</h2>
+                    <h2 class="portlet-title">Daftar transaksi selesai</h2>
                     <div class="portlet-addon">
                         <a href="{{ route('printReportTransaction', ['start' => $times['start'], 'end' => $times['end']]) }}" class="btn btn-label-primary btn-wide">Cetak</a>
                     </div>

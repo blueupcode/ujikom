@@ -30,7 +30,7 @@ class ReportController extends Controller
         $transactions = $outlet
             ->transaction()
             ->whereBetween('created_at', [$times['start'], $times['end']])
-            ->where('status', 'diambil')
+            ->whereIn('status', ['selesai', 'diambil'])
             ->where('dibayar', 'dibayar')
             ->with(['member', 'transactionDetail', 'transactionDetail.package'])
             ->get();
@@ -53,7 +53,7 @@ class ReportController extends Controller
         $transactions = Auth::user()->outlet
             ->transaction()
             ->whereBetween('created_at', [$start, $end])
-            ->where('status', 'diambil')
+            ->whereIn('status', ['selesai', 'diambil'])
             ->where('dibayar', 'dibayar')
             ->with(['member', 'transactionDetail', 'transactionDetail.package'])
             ->get();
