@@ -12,7 +12,7 @@
     <div class="header-holder header-holder-mobile">
         <div class="header-container container-fluid">
             <div class="header-wrap">
-                <button class="btn btn-label-primary btn-icon">
+                <button class="btn btn-label-primary btn-icon" data-toggle="aside">
                     <i class="fa fa-bars"></i>
                 </button>
             </div>
