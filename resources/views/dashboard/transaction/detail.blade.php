@@ -113,7 +113,7 @@
                                 </tr>
                                 @if ($transaction->dibayar === 'dibayar')
                                     <tr>
-                                        <td>Tanggal dibayar</td>
+                                        <td>Dibayar pada</td>
                                         <td>{{ $transaction->tgl_bayar }}</td>
                                     </tr>
                                 @endif
