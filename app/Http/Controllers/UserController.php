@@ -49,7 +49,7 @@ class UserController extends Controller
             Log::warning('Failed to login: ' . json_encode($data));
 
             return back()->withErrors([
-                'credential' => 'Gagal login cek kembali username dan password',
+                'credential' => 'Login gagal cek kembali username dan password',
             ]);
         }
     }
