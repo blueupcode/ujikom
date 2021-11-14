@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Member;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,12 +14,26 @@ class MemberController extends Controller
         'alamat' => 'required|min:10',
     ];
 
+    static public function checkMemberNameIsExists($memberName, $existMemberName = null)
+    {
+        if ($memberName === $existMemberName) {
+            return false;
+        } else {
+            return Auth::user()->outlet->member()->where('nama', $memberName)->exists();
+        }
+    }
+
     public function handleCreate(Request $request)
     {
         $data = $request->validate(self::$validationCreateSchema);
 
-        Auth::user()->outlet->member()->create($data);
-
-        return back();
+        if (static::checkMemberNameIsExists($data['nama'])) {
+            return back()->withErrors([
+                'nama' => 'Nama anggota sudah ada'
+            ]);
+        } else {
+            Auth::user()->outlet->member()->create($data);
+            return back();
+        }
     }
 }

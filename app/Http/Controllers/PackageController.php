@@ -20,22 +20,42 @@ class PackageController extends Controller
         'harga' => ['required', 'numeric', 'min:1'],
     ];
 
+    static private function checkPackageNameIsExists($packageName, $existPackageName = null) {
+        if ($packageName === $existPackageName) {
+            return false;
+        } else {
+            return Auth::user()->outlet->package()->where('nama_paket', $packageName)->exists();
+        }
+    }
+
     public function handleCreate(Request $request)
     {
         $data = $request->validate(self::$validationCreateSchema);
-        
-        Auth::user()->outlet->package()->create($data);
 
-        return back();
+        if (static::checkPackageNameIsExists($data['nama_paket'])) {
+            return back()->withErrors([
+                'nama_paket' => 'Nama paket sudah ada'
+            ]);
+        } else {
+            Auth::user()->outlet->package()->create($data);
+    
+            return back();
+        }
     }
 
     public function handleUpdate(Package $package, Request $request)
     {
         $data = $request->validate(self::$validationUpdateSchema);
-       
-        $package->update($data);
 
-        return back();
+        if (static::checkPackageNameIsExists($data['nama_paket'], $package->nama_paket)) {
+            return back()->withErrors([
+                'nama_paket' => 'Nama paket sudah ada'
+            ]);
+        } else {
+            $package->update($data);
+    
+            return back();
+        }
     }
 
     public function handleDelete(Package $package)

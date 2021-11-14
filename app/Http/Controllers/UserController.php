@@ -20,13 +20,20 @@ class UserController extends Controller
         'nama' => ['required', 'min:3', 'max:100'],
         'username' => ['required', 'min:3', 'max:30'],
         'password' => ['nullable', 'min:8'],
-        'role' => ['required', 'in:admin,kasir,owner']
     ];
 
     static private $validationLoginSchema = [
         'username' => ['required', 'min:3', 'max:30'],
         'password' => ['required', 'min:8'],
     ];
+
+    static public function checkUserNameIsExist($username, $existUsername = null) {
+        if ($username === $existUsername) {
+            return false;
+        } else {
+            return User::where('username', $username)->exists();
+        }
+    }
 
     public function viewLogin()
     {
@@ -43,7 +50,7 @@ class UserController extends Controller
             return redirect()->route('report');
         } else {
             return back()->withErrors([
-                'credential' => 'Gagal login',
+                'credential' => 'Gagal login cek kembali username dan password',
             ]);
         }
     }
@@ -59,24 +66,37 @@ class UserController extends Controller
     {
         $data = $request->validate(self::$validationCreateSchema);
 
-        $data['password'] = Hash::make($data['password']);
-        
-        Auth::user()->outlet->user()->create($data);
-
-        return back();
+        if (static::checkUserNameIsExist($data['username'])) {
+            return back()->withErrors([
+                'username' => 'Username sudah ada'
+            ]);
+        } else {
+            $data['password'] = Hash::make($data['password']);
+            
+            Auth::user()->outlet->user()->create($data);
+    
+            return back();
+        }
     }
 
     public function handleUpdate(User $user, Request $request)
     {
         $data = $request->validate(self::$validationUpdateSchema);
 
-        if ($data['password'] === null) {
-            unset($data['password']);
+        if (static::checkUserNameIsExist($data['username'], $user->username)) {
+            return back()->withErrors([
+                'username' => 'Username sudah ada'
+            ]);
+        } else {
+            if ($data['password'] === null) {
+                unset($data['password']);
+            } else {
+                $data['password'] = Hash::make($data['password']);
+            }
+    
+            $user->update($data);
+            return back();
         }
-
-        $user->update($data);
-
-        return back();
     }
 
     public function handleDelete(User $user)
