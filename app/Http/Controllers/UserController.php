@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -27,13 +29,6 @@ class UserController extends Controller
         'password' => ['required', 'min:8'],
     ];
 
-    static public function checkUserNameIsExist($username, $existUsername = null) {
-        if ($username === $existUsername) {
-            return false;
-        } else {
-            return User::where('username', $username)->exists();
-        }
-    }
 
     public function viewLogin()
     {
@@ -47,8 +42,12 @@ class UserController extends Controller
         if (Auth::attempt($data)) {
             $request->session()->regenerate();
 
+            Log::info('User login: ' . Auth::user()->id);
+
             return redirect()->route('report');
         } else {
+            Log::warning('Failed to login: ' . json_encode($data));
+
             return back()->withErrors([
                 'credential' => 'Gagal login cek kembali username dan password',
             ]);
@@ -57,6 +56,8 @@ class UserController extends Controller
 
     public function handleLogout()
     {
+        Log::info('User logout: ' . Auth::user()->id);
+
         Auth::logout();
 
         return redirect()->route('login');
@@ -66,15 +67,19 @@ class UserController extends Controller
     {
         $data = $request->validate(self::$validationCreateSchema);
 
-        if (static::checkUserNameIsExist($data['username'])) {
+        if (Helpers::checkUserNameIsExist($data['username'])) {
+            Log::warning('Username is exists: ' . $data['username']);
+
             return back()->withErrors([
                 'username' => 'Username sudah ada'
             ]);
         } else {
             $data['password'] = Hash::make($data['password']);
-            
-            Auth::user()->outlet->user()->create($data);
-    
+
+            $user = Auth::user()->outlet->user()->create($data);
+
+            Log::info('Create user: ' . $user->id . ' by user ' . Auth::user()->id);
+
             return back();
         }
     }
@@ -83,7 +88,9 @@ class UserController extends Controller
     {
         $data = $request->validate(self::$validationUpdateSchema);
 
-        if (static::checkUserNameIsExist($data['username'], $user->username)) {
+        if (Helpers::checkUserNameIsExist($data['username'], $user->username)) {
+            Log::warning('Username is exists: ' . $data['username']);
+
             return back()->withErrors([
                 'username' => 'Username sudah ada'
             ]);
@@ -93,8 +100,11 @@ class UserController extends Controller
             } else {
                 $data['password'] = Hash::make($data['password']);
             }
-    
+
             $user->update($data);
+
+            Log::info('Update user: ' . $user->id . ' with ' . json_encode($data) . ' by user ' . Auth::user()->id);
+
             return back();
         }
     }
@@ -102,6 +112,8 @@ class UserController extends Controller
     public function handleDelete(User $user)
     {
         $user->delete();
+
+        Log::info('Delete user: ' . $user->id . ' by user ' . Auth::user()->id);
 
         return back();
     }

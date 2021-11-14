@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use App\Models\TransactionDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class TransactionDetailController extends Controller
 {
@@ -23,6 +25,8 @@ class TransactionDetailController extends Controller
             'keterangan' => '',
         ]);
 
+        Log::info('Create transaction detail: package ' . $packageId . ' to ' . $transaction->kode_invoice . ' by user ' . Auth::user()->id);
+
         return back();
     }
 
@@ -32,12 +36,16 @@ class TransactionDetailController extends Controller
 
         $transactionDetail->update($data);
 
+        Log::info('Update transaction detail :' . $transactionDetail->id . ' with ' . json_encode($data) . ' by user ' . Auth::user()->id);
+
         return back();
     }
 
     public function handleDelete(TransactionDetail $transactionDetail)
     {
         $transactionDetail->delete();
+
+        Log::info('Delete transaction detail: ' . $transactionDetail->id . ', by user ' . Auth::user()->id);
 
         return back();
     }

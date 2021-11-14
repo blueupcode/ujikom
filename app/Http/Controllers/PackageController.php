@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers;
 use App\Models\Package;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class PackageController extends Controller
 {
@@ -20,25 +22,21 @@ class PackageController extends Controller
         'harga' => ['required', 'numeric', 'min:1'],
     ];
 
-    static private function checkPackageNameIsExists($packageName, $existPackageName = null) {
-        if ($packageName === $existPackageName) {
-            return false;
-        } else {
-            return Auth::user()->outlet->package()->where('nama_paket', $packageName)->exists();
-        }
-    }
-
     public function handleCreate(Request $request)
     {
         $data = $request->validate(self::$validationCreateSchema);
 
-        if (static::checkPackageNameIsExists($data['nama_paket'])) {
+        if (Helpers::checkPackageNameIsExists($data['nama_paket'])) {
+            Log::warning('Package name is exists: ' . $data['nama_paket']);
+
             return back()->withErrors([
                 'nama_paket' => 'Nama paket sudah ada'
             ]);
         } else {
-            Auth::user()->outlet->package()->create($data);
-    
+            $package = Auth::user()->outlet->package()->create($data);
+
+            Log::info('Create package: ' . $package->id . ' by user ' . Auth::user()->id);
+
             return back();
         }
     }
@@ -47,13 +45,17 @@ class PackageController extends Controller
     {
         $data = $request->validate(self::$validationUpdateSchema);
 
-        if (static::checkPackageNameIsExists($data['nama_paket'], $package->nama_paket)) {
+        if (Helpers::checkPackageNameIsExists($data['nama_paket'], $package->nama_paket)) {
+            Log::warning('Package name is exists: ' . $data['nama_paket']);
+
             return back()->withErrors([
                 'nama_paket' => 'Nama paket sudah ada'
             ]);
         } else {
             $package->update($data);
-    
+
+            Log::info('Update package: ' . $package->id . ' with ' . json_encode($data) . ' by user ' . Auth::user()->id);
+
             return back();
         }
     }
@@ -61,6 +63,8 @@ class PackageController extends Controller
     public function handleDelete(Package $package)
     {
         $package->delete();
+
+        Log::info('Delete package: ' . $package->id . ', by user ' . Auth::user()->id);
 
         return back();
     }

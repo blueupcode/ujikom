@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers;
 use App\Models\Outlet;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class OutletController extends Controller
 {
@@ -25,19 +26,13 @@ class OutletController extends Controller
         'alamat' => ['required', 'min:10'],
     ];
 
-    static public function checkOutletNameIsExist($outletName, $existOutletName = null) {
-        if ($outletName === $existOutletName) {
-            return false;
-        } else {
-            return Outlet::where('nama', $outletName)->exists();
-        }
-    }
-
     public function viewOutlet()
     {
         $outlet = Auth::user()->outlet;
         $users = $outlet->user->groupBy('role');
         $packages = $outlet->package;
+
+        Log::info('View outlet data: ' . $outlet->id . ' by user ' . Auth::user()->id);
 
         return view('dashboard.outlet.index', [
             'outlet' => $outlet,
@@ -48,7 +43,8 @@ class OutletController extends Controller
         ]);
     }
 
-    public function viewCreate() {
+    public function viewCreate()
+    {
         return view('auth.create-outlet');
     }
 
@@ -56,12 +52,16 @@ class OutletController extends Controller
     {
         $data = $request->validate(self::$validationCreateSchema);
 
-        if (static::checkOutletNameIsExist($data['nama_outlet'])) {
+        if (Helpers::checkOutletNameIsExist($data['nama_outlet'])) {
+            Log::warning('Outlet name is exists: ' . $data['nama_outlet']);
+
             return back()->withErrors([
                 'nama_outlet' => 'Nama outlet sudah ada'
             ]);
         } else {
-            if (UserController::checkUserNameIsExist($data['username'])) {
+            if (Helpers::checkUserNameIsExist($data['username'])) {
+                Log::warning('Username is exists: ' . $data['username']);
+
                 return back()->withErrors([
                     'username' => 'Username sudah ada'
                 ]);
@@ -72,28 +72,37 @@ class OutletController extends Controller
                     'alamat' => $data['alamat'],
                 ]);
 
-                $outlet->user()->create([
+                Log::info('Create outlet: ' . $outlet->id);
+
+                $user = $outlet->user()->create([
                     'nama' => $data['nama_user'],
                     'username' => $data['username'],
                     'password' => Hash::make($data['password']),
                     'role' => 'admin'
                 ]);
-        
+
+                Log::info('Create user: ' . $user->id);
+
                 return redirect()->route('login');
             }
         }
     }
 
-    public function handleUpdate(Request $request) {
+    public function handleUpdate(Request $request)
+    {
         $data = $request->validate(self::$validationUpdateSchema);
 
-        if (static::checkOutletNameIsExist($data['nama'], Auth::user()->outlet->nama)) {
+        if (Helpers::checkOutletNameIsExist($data['nama'], Auth::user()->outlet->nama)) {
+            Log::warning('Outlet name is exists: ' . $data['nama_outlet']);
+
             return back()->withErrors([
                 'nama' => 'Nama outlet sudah ada'
             ]);
         } else {
             Auth::user()->outlet->update($data);
-    
+
+            Log::info('Update outlet: ' . Auth::user()->outlet->id . ' with ' . json_encode($data) . ' by user ' . Auth::user()->id);
+
             return back();
         }
     }
