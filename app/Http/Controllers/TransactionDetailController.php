@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Log;
 class TransactionDetailController extends Controller
 {
     static private $validationUpdateSchema = [
-        'qty' => 'required|numeric|min:1',
-        'keterangan' => 'nullable',
+        'qty' => ['required', 'numeric', 'min:1'],
+        'keterangan' => ['nullable'],
     ];
 
     public function handleCreate(Transaction $transaction, Request $request)

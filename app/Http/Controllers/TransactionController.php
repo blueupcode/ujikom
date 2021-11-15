@@ -22,10 +22,10 @@ class TransactionController extends Controller
     ];
 
     static private $validationUpdateInvoiceSchema = [
-        'pajak' => 'required|numeric|min:0',
-        'biaya_tambahan' => 'required|numeric|min:0',
-        'diskon' => 'required|numeric|min:0',
-        'batas_waktu' => 'required|date',
+        'pajak' => ['required', 'numeric', 'min:0'],
+        'biaya_tambahan' => ['required', 'numeric', 'min:0'],
+        'diskon' => ['required', 'numeric', 'min:0'],
+        'batas_waktu' => ['required', 'date'],
     ];
 
     private function getNewStatus($currentStatus)
