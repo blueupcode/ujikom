@@ -14,7 +14,6 @@
     @endif
     <div class="row">
         <div class="col-md-8">
-
             <div class="portlet">
                 <div class="portlet-header">
                     <h2 class="portlet-title">Daftar pesanan</h2>

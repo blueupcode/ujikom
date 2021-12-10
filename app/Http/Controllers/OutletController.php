@@ -90,6 +90,10 @@ class OutletController extends Controller
 
     public function handleUpdate(Request $request)
     {
+        $id = Auth::user()->id_outlet;
+
+        Outlet::find($id)->update();
+
         $data = $request->validate(self::$validationUpdateSchema);
 
         if (Helpers::checkOutletNameIsExist($data['nama'], Auth::user()->outlet->nama)) {

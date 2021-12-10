@@ -51,17 +51,32 @@ class PackageController extends Controller
             return back()->withErrors([
                 'nama_paket' => 'Nama paket sudah ada'
             ]);
-        } else {
-            $package->update($data);
-
-            Log::info('Update package: ' . $package->id . ' with ' . json_encode($data) . ' by user ' . Auth::user()->id);
-
-            return back();
         }
+
+        $package = Auth::user()->outlet->package()->find($package->id);
+
+        if (!$package) {
+            return back()->withErrors([
+                'nama_paket' => 'Tidak bisa mengubah data'
+            ]);
+        }
+
+        Log::info('Update package: ' . $package->id . ' with ' . json_encode($data) . ' by user ' . Auth::user()->id);
+
+        return back();
     }
 
     public function handleDelete(Package $package)
     {
+
+        $package = Auth::user()->outlet->package()->find($package->id);
+        dd($package);
+        if (!$package) {
+            return back()->withErrors([
+                'nama_paket' => 'Nama paket sudah ada'
+            ]);
+        }
+        
         $package->delete();
 
         Log::info('Delete package: ' . $package->id . ', by user ' . Auth::user()->id);
