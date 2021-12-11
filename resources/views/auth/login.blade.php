@@ -29,7 +29,7 @@
                         </div>
                     @enderror
                 </div>
-                <button type="submit" class="btn btn-block btn-lg btn-primary">Masuk</button>
+                <button type="submit" class="btn btn-block btn-lg btn-primary">Login</button>
             </form>
             
         </div>
