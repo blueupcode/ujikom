@@ -28,5 +28,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('role', function($user, ...$role) {
             return in_array($user->role, $role);
         });
+
+        Gate::define('role', function($user, ...$role) {
+            return in_array($user->role, $role)
+        })
     }
 }
