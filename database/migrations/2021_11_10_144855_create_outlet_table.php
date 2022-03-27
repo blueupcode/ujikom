@@ -17,7 +17,7 @@ class CreateOutletTable extends Migration
     {
         Schema::create(self::$table, function (Blueprint $table) {
             $table->id();
-            $table->string('nama', 100)->unique()->index();
+            $table->string('nama', 100)->unique();
             $table->text('alamat');
             $table->string('tlp', 15);
             $table->timestamps();

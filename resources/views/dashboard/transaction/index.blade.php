@@ -61,10 +61,11 @@
                         ])
                     </div>
                 </div>
-                @if ($transactions->hasPages())
+                @if (count($transactions) > 0)
                     <div class="portlet-footer">
                         {{ $transactions->links() }}
                     </div>
+                    
                 @endif
             </div>
             

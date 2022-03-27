@@ -1,29 +1,9 @@
-<div class="header">
-    <div class="header-holder header-holder-desktop">
-        <div class="header-container container-fluid">
-            <div class="header-wrap header-wrap-block justify-content-start">
-                <h2 class="header-title">{{ Auth::user()->outlet->nama }}</h2>
-            </div>
-            <div class="header-wrap">
-                <a href="{{ route('handleLogout') }}" class="btn btn-label-danger btn-widest btn-lg">Logout</a>
-            </div>
-        </div>
-    </div>
-    <div class="header-holder header-holder-mobile">
-        <div class="header-container container-fluid">
-            <div class="header-wrap">
-                <button class="btn btn-label-primary btn-icon" data-toggle="aside">
-                    <i class="fa fa-bars"></i>
-                </button>
-            </div>
-            <div class="header-wrap header-wrap-block">
-                <h2 class="header-title">{{ Auth::user()->outlet->nama }}</h2>
-            </div>
-            <div class="header-wrap">
-                <a href="{{ route('handleLogout') }}" class="btn btn-label-danger btn-icon">
-                    <i class="fa fa-door-open"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+<nav class="main-header navbar navbar-expand navbar-white navbar-light align-items-center">
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+    </ul>
+    <h4 class="w-100 mb-0">Outlet ku</h4>
+    <button class="btn btn-danger text-nowrap">Log out</button>
+</nav>

@@ -2,10 +2,6 @@
 
 namespace App;
 
-use App\Models\Outlet;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-
 class Helpers {
     static private function calculateTransactionDetail($transaction)
     {
@@ -35,38 +31,5 @@ class Helpers {
         }
 
         return $transactions;
-    }
-
-    static public function checkMemberNameIsExists($memberName, $existMemberName = null)
-    {
-        if ($memberName === $existMemberName) {
-            return false;
-        } else {
-            return Auth::user()->outlet->member()->where('nama', $memberName)->exists();
-        }
-    }
-
-    static public function checkOutletNameIsExist($outletName, $existOutletName = null) {
-        if ($outletName === $existOutletName) {
-            return false;
-        } else {
-            return Outlet::where('nama', $outletName)->exists();
-        }
-    }
-
-    static public function checkPackageNameIsExists($packageName, $existPackageName = null) {
-        if ($packageName === $existPackageName) {
-            return false;
-        } else {
-            return Auth::user()->outlet->package()->where('nama_paket', $packageName)->exists();
-        }
-    }
-
-    static public function checkUserNameIsExist($username, $existUsername = null) {
-        if ($username === $existUsername) {
-            return false;
-        } else {
-            return User::where('username', $username)->exists();
-        }
     }
 }

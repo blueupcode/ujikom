@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Member;
+use App\Models\Transaction;
 use Carbon\Carbon;
 use App\Helpers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
 {
@@ -40,8 +41,6 @@ class ReportController extends Controller
             ->whereBetween('created_at', [$times['start'], $times['end']])
             ->get();
 
-        Log::info('View report: from ' . $times['start'] . ' to ' . $times['end'] . ' by user : ' . Auth::user()->id);
-
         return view('dashboard.report.index', [
             'transactions' => $transactions,
             'members' => $members,
@@ -59,7 +58,7 @@ class ReportController extends Controller
             ->with(['member', 'transactionDetail', 'transactionDetail.package'])
             ->get();
         $transactions = Helpers::injectCalculatedDataToTransactions($transactions);
-
+        
         $summary = [
             'total_pesanan' => 0,
             'subtotal' => 0,
@@ -78,8 +77,6 @@ class ReportController extends Controller
             $summary['total'] += $transaction->total;
         }
 
-        Log::info('Print transaction report: from ' . $start . ' to ' . $end . ' by user ' . Auth::user()->id);
-
         return view('report.transaction', [
             'transactions' => $transactions,
             'summary' => $summary,
@@ -97,10 +94,8 @@ class ReportController extends Controller
             ->whereBetween('created_at', [$start, $end])
             ->get();
 
-        Log::info('Print member report: from ' . $start . ' to ' . $end . ' by user ' . Auth::user()->id);
-
         return view('report.member', [
-            'members' => $members,
+            'members' =>$members,
             'times' => [
                 'start' => $start,
                 'end' => $end,

@@ -8,7 +8,6 @@ use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class TransactionController extends Controller
@@ -22,10 +21,10 @@ class TransactionController extends Controller
     ];
 
     static private $validationUpdateInvoiceSchema = [
-        'pajak' => ['required', 'numeric', 'min:0'],
-        'biaya_tambahan' => ['required', 'numeric', 'min:0'],
-        'diskon' => ['required', 'numeric', 'min:0'],
-        'batas_waktu' => ['required', 'date'],
+        'pajak' => 'required|numeric|min:0',
+        'biaya_tambahan' => 'required|numeric|min:0',
+        'diskon' => 'required|numeric|min:0',
+        'batas_waktu' => 'required|date',
     ];
 
     private function getNewStatus($currentStatus)
@@ -64,8 +63,6 @@ class TransactionController extends Controller
 
         $transactions = Helpers::injectCalculatedDataToTransactions($transactions);
 
-        Log::info('View transactions: by user ' . Auth::user()->id);
-
         return view('dashboard.transaction.index', [
             'members' => $members,
             'transactions' => $transactions
@@ -93,8 +90,6 @@ class TransactionController extends Controller
         $transaction->total = $transactionTotal;
         $transaction->status_new = $this->getNewStatus($transaction->status);
 
-        Log::info('View transaction detail: ' . $invoiceCode . ' by user ' . Auth::user()->id);
-
         return view('dashboard.transaction.detail', [
             'member' => $member,
             'packages' => $packages,
@@ -118,8 +113,6 @@ class TransactionController extends Controller
             'dibayar' => 'belum_dibayar',
         ]);
 
-        Log::info('Create transaction: ' . $transaction->kode_invoice . ' by user ' . Auth::user()->id);
-
         return redirect()->route('transactionDetail', [
             'invoiceCode' => $transaction->kode_invoice,
         ]);
@@ -131,8 +124,6 @@ class TransactionController extends Controller
 
         $transaction->update($data);
 
-        Log::info('Update transaction invoice: ' . $transaction->kode_invoice . ' with ' . json_encode($data) . ' by user ' . Auth::user()->id);
-
         return back();
     }
 
@@ -143,30 +134,23 @@ class TransactionController extends Controller
             'tgl_bayar' => Carbon::now()->toDateTimeString(),
         ]);
 
-        Log::info('Pay transaction invoice: ' . $transaction->kode_invoice . ' by user ' . Auth::user()->id);
-
         return back();
     }
 
     public function handleProcess(Transaction $transaction)
     {
         $newStatus = $this->getNewStatus($transaction->status);
-
+        
         $transaction->update([
             'status' => $newStatus,
         ]);
 
-        Log::info('Change transaction status: ' . $transaction->kode_invoice . ' changed to ' . $newStatus . ' by user ' . Auth::user()->id);
-
         return back();
     }
 
-    public function handleDelete(Transaction $transaction)
-    {
+    public function handleDelete(Transaction $transaction) {
         $transaction->delete();
-
-        Log::info('Delete transaction: ' . $transaction->id . ' by user ' . Auth::user()->id);
-
+        
         return redirect()->route('transaction');
     }
 }

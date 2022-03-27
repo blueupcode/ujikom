@@ -17,10 +17,10 @@ class CreateMemberTable extends Migration
     {
         Schema::create(self::$table, function (Blueprint $table) {
             $table->id();
-            $table->string('nama', 100)->index();
+            $table->string('nama', 100)->unique();
             $table->text('alamat');
             $table->enum('jenis_kelamin', ['L', 'P']);
-            $table->string('tlp', 15);
+            $table->string('tlp', 15)->unique();
             $table->foreignId('id_outlet')->references('id')->on('tb_outlet')->onDelete('cascade');
             $table->timestamps();
         });

@@ -32,10 +32,10 @@ class UserSeeder extends Seeder
         ]);
         User::create([
             "nama" => "Owner",
-                "username" => "owner",
-                "password" => Hash::make("12345678"),
-                "id_outlet" => 1,
-                "role" => "owner",
+            "username" => "owner",
+            "password" => Hash::make("12345678"),
+            "id_outlet" => 1,
+            "role" => "owner",
         ]);
     }
 }

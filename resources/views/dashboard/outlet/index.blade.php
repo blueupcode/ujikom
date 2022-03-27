@@ -106,7 +106,7 @@
                 </div>
                 <div class="portlet-body">
 
-                    <form method="POST" action="{{ route('handleUpdateOutlet') }}" onsubmit="return confirm('Apakah anda ingin mengubah data outlet')">
+                    <form method="POST" action="{{ route('handleUpdateOutlet') }}">
                         @csrf
                         <div class="form-group">
                             <input type="text" name="nama" class="form-control" value="{{ $outlet->nama }}" placeholder="Masukkan nama outlet" required minlength="3" maxlength="100">
